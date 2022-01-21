@@ -312,17 +312,19 @@ macro_rules! i2c {
 
                 self.i2c.cr2.modify(|_, w| unsafe {
                     w
-                        // Start transfer
-                        .start().set_bit()
                         // Set number of bytes to transfer
                         .nbytes().bits(buflen as u8)
                         // Set address to transfer to/from
                         .sadd().bits((addr << 1) as u16)
+                        // 7-bit addressing mode
+                        .add10().clear_bit()
                         // Set transfer direction to write
                         .rd_wrn().clear_bit()
                         // Automatic end mode
                         .autoend().set_bit()
                         .reload().clear_bit()
+                        // Start transfer
+                        .start().set_bit()
                 });
 
                 let mut idx = 0;
@@ -358,17 +360,19 @@ macro_rules! i2c {
                 // is BUSY or I2C is in slave mode.
                 self.i2c.cr2.modify(|_, w| unsafe {
                     w
-                        // Start transfer
-                        .start().set_bit()
                         // Set number of bytes to transfer
                         .nbytes().bits(buflen as u8)
                         // Set address to transfer to/from
                         .sadd().bits((addr << 1) as u16)
+                        // 7-bit addressing mode
+                        .add10().clear_bit()
                         // Set transfer direction to read
                         .rd_wrn().set_bit()
-                        // automatic end mode
+                        // Automatic end mode
                         .autoend().set_bit()
                         .reload().clear_bit()
+                        // Start transfer
+                        .start().set_bit()
                     });
                 let mut idx = 0;
                 loop {
